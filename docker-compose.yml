@@ -1,0 +1,50 @@
+version: "3"
+
+services:
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./docker/nginx/hosts/:/etc/nginx/conf.d/
+      - ./docker/nginx/log/:/var/log/nginx/
+      - ./:/var/www/site/
+    depends_on:
+      - php_fpm
+
+  php_fpm:
+    build: ./docker/php_fpm
+    restart: always
+    volumes:
+      - ./docker/php_fpm/log/:/var/log/
+      - ./:/var/www/site/
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: mariadb
+    restart: always
+    environment:
+      # TODO На проде через переменную окружения!
+      MARIADB_ROOT_PASSWORD: 12345678
+    volumes:
+      - ./docker/mariadb/:/var/lib/mysql/
+      - ./docker/mariadb-backup/:/backup/
+    ports:
+      - 3306:3306
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 5050:80
+    environment:
+      - PMA_ARBITRARY=0
+      - PMA_HOST=mariadb
+      - PMA_PORT=3306
+      - PMA_USER=root
+      # TODO На проде через переменную окружения!
+      - PMA_PASSWORD=12345678
+    depends_on:
+      - mariadb
