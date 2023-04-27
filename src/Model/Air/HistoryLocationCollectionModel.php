@@ -17,7 +17,7 @@ use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * Модель взаимодействия с коллекцией типов расходов.
+ * Модель для получения истории нахождения ВС в аэропортах.
  */
 class HistoryLocationCollectionModel
 {
