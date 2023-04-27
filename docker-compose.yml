@@ -29,7 +29,7 @@ services:
       # TODO На проде через переменную окружения!
       MARIADB_ROOT_PASSWORD: 12345678
     volumes:
-      - ./docker/mariadb/:/var/lib/mysql/
+      - mariadb_data:/var/lib/mysql/
       - ./docker/mariadb-backup/:/backup/
     ports:
       - 3306:3306
@@ -48,3 +48,24 @@ services:
       - PMA_PASSWORD=12345678
     depends_on:
       - mariadb
+
+# ###> doctrine/doctrine-bundle ###
+#   database:
+#     image: postgres:${POSTGRES_VERSION:-15}-alpine
+#     environment:
+#       POSTGRES_DB: ${POSTGRES_DB:-app}
+#       # You should definitely change the password in production
+#       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
+#       POSTGRES_USER: ${POSTGRES_USER:-app}
+#     volumes:
+#       - database_data:/var/lib/postgresql/data:rw
+#       # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
+#       # - ./docker/db/data:/var/lib/postgresql/data:rw
+# ###< doctrine/doctrine-bundle ###
+
+volumes:
+# ###> doctrine/doctrine-bundle ###
+#   database_data:
+# ###< doctrine/doctrine-bundle ###
+  mariadb_data:
+     driver: local

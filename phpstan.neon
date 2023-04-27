@@ -1,0 +1,18 @@
+parameters:
+    phpVersion: 80200
+    level: 8
+    bootstrapFiles:
+        - vendor/autoload.php
+    symfony:
+        container_xml_path: var/cache/dev/App_KernelDevDebugContainer.xml
+        consoleApplicationLoader: tests/console-application.php
+    scanDirectories:
+        - var/cache/dev/Symfony/Config
+    doctrine:
+        objectManagerLoader: tests/object-manager.php
+    paths:
+        - migrations
+        - src
+        - tests
+    checkMissingIterableValueType: true
+    excludes_analyse:
