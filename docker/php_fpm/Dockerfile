@@ -6,6 +6,7 @@ RUN set -eux; \
                 tzdata \
     		    npm \
     		    graphviz \
+                postgresql-client \
                 ssmtp \
     		    libzip
 
@@ -14,6 +15,7 @@ RUN apk add --no-cache --virtual .build-deps \
                 g++ \
                 make \
                 openssl-dev \
+                postgresql-dev \
                 zlib-dev \
                 libzip-dev  \
                 # для xdebug
@@ -23,6 +25,8 @@ RUN docker-php-ext-install -j "$(nproc)" \
                 exif \
                 mysqli \
                 pdo_mysql \
+                pdo_pgsql \
+                pgsql \
                 opcache \
                 zip
 
@@ -30,11 +34,9 @@ RUN docker-php-source extract \
     && pecl channel-update pecl.php.net \
     && pecl install -f \
                 apcu \
-                xdebug \
     && docker-php-ext-enable \
                 apcu \
                 opcache \
-                xdebug \
     && docker-php-source delete
 
     # Удалеяем
@@ -50,10 +52,10 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 ADD ./php.ini /usr/local/etc/php/conf.d/40-custom.ini
 
 # Локальный часовой пояс
-ENV TZ Europe/Moscow
+# ENV TZ Europe/Moscow
 
-RUN cp /usr/share/zoneinfo/$TZ /etc/localtime \
-    && echo $TZ > /etc/timezone
+# RUN cp /usr/share/zoneinfo/$TZ /etc/localtime \
+#     && echo $TZ > /etc/timezone
 
 WORKDIR /var/www/site
 

@@ -20,52 +20,44 @@ services:
       - ./docker/php_fpm/log/:/var/log/
       - ./:/var/www/site/
     depends_on:
-      - mariadb
+      - database
 
-  mariadb:
-    image: mariadb
+  ###> doctrine/doctrine-bundle ###
+  database:
+    image: postgres:${POSTGRES_VERSION:-15}-alpine
     restart: always
     environment:
-      # TODO На проде через переменную окружения!
-      MARIADB_ROOT_PASSWORD: 12345678
+      # POSTGRES_DB: ${POSTGRES_DB:-sa}
+      # You should definitely change the password in production
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-12345678}
+      POSTGRES_USER: ${POSTGRES_USER:-sa}
     volumes:
-      - mariadb_data:/var/lib/mysql/
-      - ./docker/mariadb-backup/:/backup/
+      - database_data:/var/lib/postgresql/data:rw
+    # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
+    # - ./docker/db/data:/var/lib/postgresql/data:rw
+    ###< doctrine/doctrine-bundle ###
     ports:
-      - 3306:3306
+      - 5432:5432
 
-  phpmyadmin:
-    image: phpmyadmin
-    restart: always
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGAMIN_PASSWORD:-admin@local.ru}
+      PGADMIN_DEFAULT_PASSWORD: ${PGAMIN_PASSWORD:-1234}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      # - ./docker/pgadmin:/var/lib/pgadmin:rw
+      - pgadmin_data:/var/lib/pgadmin:rw
     ports:
       - 5050:80
-    environment:
-      - PMA_ARBITRARY=0
-      - PMA_HOST=mariadb
-      - PMA_PORT=3306
-      - PMA_USER=root
-      # TODO На проде через переменную окружения!
-      - PMA_PASSWORD=12345678
+    restart: always
     depends_on:
-      - mariadb
-
-# ###> doctrine/doctrine-bundle ###
-#   database:
-#     image: postgres:${POSTGRES_VERSION:-15}-alpine
-#     environment:
-#       POSTGRES_DB: ${POSTGRES_DB:-app}
-#       # You should definitely change the password in production
-#       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
-#       POSTGRES_USER: ${POSTGRES_USER:-app}
-#     volumes:
-#       - database_data:/var/lib/postgresql/data:rw
-#       # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
-#       # - ./docker/db/data:/var/lib/postgresql/data:rw
-# ###< doctrine/doctrine-bundle ###
+      - database
 
 volumes:
-# ###> doctrine/doctrine-bundle ###
-#   database_data:
-# ###< doctrine/doctrine-bundle ###
-  mariadb_data:
-     driver: local
+  ###> doctrine/doctrine-bundle ###
+  database_data:
+    ###< doctrine/doctrine-bundle ###
+    driver: local
+  pgadmin_data:
+    driver: local

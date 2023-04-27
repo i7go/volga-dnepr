@@ -33,10 +33,10 @@ class Flights
     #[Serializer\Ignore]
     private Airports $airport2;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
     private \DateTimeInterface $takeoff;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
     private \DateTimeInterface $landing;
 
     #[ORM\Column(name: 'aload')]
