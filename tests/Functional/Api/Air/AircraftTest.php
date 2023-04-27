@@ -22,10 +22,9 @@ class AircraftTest extends ApiTestCase
 
         $response = $client->getResponse();
         $data = $response->getContent();
-        $arr = json_decode($data);
+        self::assertIsString($data);
 
-        self::assertLessThan(\count($arr), 0);
-
-        // var_dump(\count($arr));
+        $history = json_decode($data);
+        self::assertLessThan(\count($history), 0);
     }
 }
